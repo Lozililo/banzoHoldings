@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "750144838971",
+    "firebase_url": "https://bandzo-holdings.firebaseio.com",
+    "project_id": "bandzo-holdings",
+    "storage_bucket": "bandzo-holdings.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750144838971:android:305b1996ba210186",
+        "android_client_info": {
+          "package_name": "com.banzo.banzoholdings"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "750144838971-buak03bta35qflilu2npa34kvce3b9bn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqId8dXB9OOw9eO5CJOb89wvcbrtd3TRY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
