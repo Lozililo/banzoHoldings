@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView=findViewById(R.id.my_recycler_view);
-        imageReference = FirebaseStorage.getInstance().getReference();
+
 
 
         db.collection("product").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -53,26 +53,19 @@ public class MainActivity extends AppCompatActivity {
                         banzoProducts products = document.toObject(banzoProducts.class);
                         String description=products.getDesc();
                         String name =products.getName();
-                        final String image=products.getImage();
-                        String price=products.getPrice();
+                        String image=products.getImage();
+                        String price= "R "+products.getPrice();
                         boolean isCombo=products.isCombo();
 
-                        imageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                Log.e("URI", uri.toString());
-
-                            }
-                        });
                         banzoProducts banzoProducts=new banzoProducts(description,name,image,isCombo,price);
                         banzoProductsList.add(banzoProducts);
-                        banzoProductsAdapter=new banzoProductsAdapter(banzoProductsList);
+                        banzoProductsAdapter=new banzoProductsAdapter(MainActivity.this,banzoProductsList);
                         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
                         recyclerView.setLayoutManager(mLayoutManager);
                         recyclerView.setItemAnimator(new DefaultItemAnimator());
                         recyclerView.setAdapter(banzoProductsAdapter);
 
-                        Log.d("naledi", document.getId() + " => name  of product is " + name + " this is what it does "+ description + " the price is R"+ price + " the combo is "+ isCombo);
+                        Log.d("naledi", document.getId() + " => name  of product is " + name + " this is what it does "+ description + " the price is R"+ price + " the combo is "+ isCombo + "and image url is " +image);
 
                     }
                 } else {
