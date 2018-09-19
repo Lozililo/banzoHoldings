@@ -1,5 +1,6 @@
 package com.banzo.banzoholdings;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -28,21 +30,21 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements banzoProductsAdapter.banzoProductListener {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    StorageReference imageReference;
     banzoProductsAdapter banzoProductsAdapter;
     private List<banzoProducts> banzoProductsList = new ArrayList<>();
     RecyclerView recyclerView;
+    String description,name,image,price;
+    boolean isCombo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView=findViewById(R.id.my_recycler_view);
-
-
 
         db.collection("product").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -51,29 +53,36 @@ public class MainActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : task.getResult()) {
 
                         banzoProducts products = document.toObject(banzoProducts.class);
-                        String description=products.getDesc();
-                        String name =products.getName();
-                        String image=products.getImage();
-                        String price= "R "+products.getPrice();
-                        boolean isCombo=products.isCombo();
+                         description=products.getDesc();
+                         name =products.getName();
+                         image=products.getImage();
+                         price= products.getPrice();
+                         isCombo=products.isCombo();
 
                         banzoProducts banzoProducts=new banzoProducts(description,name,image,isCombo,price);
                         banzoProductsList.add(banzoProducts);
-                        banzoProductsAdapter=new banzoProductsAdapter(MainActivity.this,banzoProductsList);
+                        banzoProductsAdapter=new banzoProductsAdapter(MainActivity.this,banzoProductsList,MainActivity.this);
                         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
                         recyclerView.setLayoutManager(mLayoutManager);
                         recyclerView.setItemAnimator(new DefaultItemAnimator());
                         recyclerView.setAdapter(banzoProductsAdapter);
-
-                        Log.d("naledi", document.getId() + " => name  of product is " + name + " this is what it does "+ description + " the price is R"+ price + " the combo is "+ isCombo + "and image url is " +image);
-
                     }
                 } else {
                     Log.d("naledi", "Error getting documents.", task.getException());
                 }
             }
         });
+    }
 
+    @Override
+    public void onProductSelected(banzoProducts product) {
 
+        //Toast.makeText(getApplicationContext(), "Selected: " + product.getName() + ", " + product.getPrice(), Toast.LENGTH_LONG).show();
+        Intent intent=new Intent(MainActivity.this,ProductDescriptionActivity.class);
+        intent.putExtra("name",product.getName());
+        intent.putExtra("description",product.getDesc());
+        intent.putExtra("image",product.getImage());
+        intent.putExtra("price",product.getPrice());
+        startActivityForResult(intent, 10);
     }
 }

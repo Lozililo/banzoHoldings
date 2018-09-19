@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+
 import java.util.List;
 
 public class banzoProductsAdapter extends RecyclerView.Adapter<banzoProductsAdapter.MyViewHolder> {
@@ -24,6 +26,7 @@ public class banzoProductsAdapter extends RecyclerView.Adapter<banzoProductsAdap
     private List<banzoProducts> banzoProductsList;
     Context context;
     StorageReference imageReference= FirebaseStorage.getInstance().getReference();
+    private banzoProductListener listener;
 
         public class MyViewHolder extends RecyclerView.ViewHolder {
             public TextView productName, productDescription, productPrice;
@@ -33,15 +36,24 @@ public class banzoProductsAdapter extends RecyclerView.Adapter<banzoProductsAdap
             public MyViewHolder(View view) {
                 super(view);
                productName = view.findViewById(R.id.productName);
-               productDescription =  view.findViewById(R.id.productDescription);
                productPrice =  view.findViewById(R.id.productPrice);
                productImage=view.findViewById(R.id.productImage);
+
+               view.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View view) {
+                       listener.onProductSelected(banzoProductsList.get(getAdapterPosition()));
+
+                   }
+               });
             }
         }
 
-    public banzoProductsAdapter(Context context,List<banzoProducts> banzoProductsList) {
+
+    public banzoProductsAdapter(Context context,List<banzoProducts> banzoProductsList,banzoProductListener listener) {
             this.context=context;
         this.banzoProductsList = banzoProductsList;
+        this.listener=listener;
     }
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -54,9 +66,8 @@ public class banzoProductsAdapter extends RecyclerView.Adapter<banzoProductsAdap
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
             banzoProducts products = banzoProductsList.get(position);
-       holder.productName.setText(products.getName());
-       holder.productDescription.setText(products.getDesc());
-       holder.productPrice.setText(products.getPrice());
+            holder.productName.setText(products.getName());
+            holder.productPrice.setText(products.getPrice());
 
         imageReference.child(products.getImage()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -72,6 +83,10 @@ public class banzoProductsAdapter extends RecyclerView.Adapter<banzoProductsAdap
     @Override
     public int getItemCount() {
         return banzoProductsList.size();
+    }
+
+    public interface banzoProductListener{
+        void onProductSelected(banzoProducts product);
     }
 }
 
